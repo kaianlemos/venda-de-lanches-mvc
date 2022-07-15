@@ -29,7 +29,7 @@ namespace KaianLanches.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(loginVM);             
+                return View(loginVM);
             }
 
             var user = await _userManager.FindByNameAsync(loginVM.UserName);
@@ -47,8 +47,43 @@ namespace KaianLanches.Controllers
                 }
             }
             ModelState.AddModelError("", "Falha ao realizar o login!");
-            return View(loginVM); 
+            return View(loginVM);
+        }
 
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Register(LoginViewModel registroVM)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new IdentityUser { UserName = registroVM.UserName };
+                var result = await _userManager.CreateAsync(user, registroVM.Password);
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Login", "Account");
+                }
+                else
+                {
+                    ModelState.AddModelError("Registro", "Falha ao registrar o usuário");
+                }
+            }
+            return View(registroVM);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Logout()
+        {
+            HttpContext.Session.Clear();
+            HttpContext.User = null;
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
         }
     }
 }
