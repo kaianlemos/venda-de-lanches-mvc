@@ -1,6 +1,7 @@
 ﻿using KaianLanches.Models;
 using KaianLanches.Repositories.Interfaces;
 using KaianLanches.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KaianLanches.Controllers
@@ -31,6 +32,7 @@ namespace KaianLanches.Controllers
             return View(carrinhoCompraVM);
         }
         
+        [Authorize]
         public IActionResult AdicionarItemNoCarrinhoCompra(int lancheId)
         {
             var lancheSelecionado = _lancheRepository.Lanches
@@ -43,7 +45,7 @@ namespace KaianLanches.Controllers
             return RedirectToAction("Index");
         }
 
-        
+        [Authorize]
         public IActionResult RemoverItemDoCarrinhoCompra(int lancheId)
         {
             var lancheSelecionado = _lancheRepository.Lanches.FirstOrDefault(
