@@ -5,6 +5,7 @@ using KaianLanches.Repositories.Interfaces;
 using KaianLanches.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using ReflectionIT.Mvc.Paging;
 
 namespace KaianLanches;
 public class Startup
@@ -23,6 +24,12 @@ public class Startup
         options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
         services.AddControllersWithViews();
+
+        services.AddPaging(options =>
+        {
+            options.ViewName = "Bootstrap4";
+            options.PageParameterName = "pageindex";
+        });
 
         services.AddIdentity<IdentityUser, IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>()
