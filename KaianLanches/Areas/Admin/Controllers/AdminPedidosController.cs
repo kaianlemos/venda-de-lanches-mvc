@@ -9,6 +9,7 @@ using KaianLanches.Context;
 using KaianLanches.Models;
 using Microsoft.AspNetCore.Authorization;
 using ReflectionIT.Mvc.Paging;
+using KaianLanches.ViewModels;
 
 namespace KaianLanches.Areas.Admin.Controllers
 {
@@ -22,6 +23,29 @@ namespace KaianLanches.Areas.Admin.Controllers
         {
             _context = context;
         }
+
+        public IActionResult PedidoLanches(int? id)
+        {
+            var pedido = _context.Pedidos
+                .Include(p => p.PedidoItens)
+                .ThenInclude(l => l.Lanche)
+                .FirstOrDefault(l => l.PedidoId == id);
+
+            if (pedido == null)
+            {
+                Response.StatusCode = 404;
+                return View("PedidoNotFound", id.Value);
+            }
+
+            PedidoLancheViewModel pedidoLanches = new PedidoLancheViewModel()
+            {
+                Pedido = pedido,
+                PedidoDetalhes = pedido.PedidoItens
+            };
+            return View(pedidoLanches);
+        }
+
+
 
         // GET: Admin/AdminPedidos
         //public async Task<IActionResult> Index()
@@ -38,7 +62,7 @@ namespace KaianLanches.Areas.Admin.Controllers
                 resultado = resultado.Where(p => p.Nome.Contains(filter));
             }
 
-            var model = await PagingList.CreateAsync(resultado, 2, pageindex, sort, "Nome");
+            var model = await PagingList.CreateAsync(resultado, 5, pageindex, sort, "Nome");
             model.RouteValue = new RouteValueDictionary() { { "filter", filter } };
 
             return View(model);
