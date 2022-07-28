@@ -1,4 +1,5 @@
-﻿using KaianLanches.Context;
+﻿using KaianLanches.Areas.Admin.Services;
+using KaianLanches.Context;
 using KaianLanches.Models;
 using KaianLanches.Repositories;
 using KaianLanches.Repositories.Interfaces;
@@ -41,6 +42,7 @@ public class Startup
         services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
         services.AddScoped(sp => CarrinhoCompra.GetCarrinho(sp));
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        services.AddScoped<RelatorioVendasService>();
 
         services.AddAuthorization(options =>
         {
